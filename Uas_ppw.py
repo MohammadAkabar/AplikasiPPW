@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import re
 import nltk
+nltk.download('punkt')
 from nltk.tokenize import sent_tokenize
 nltk.download('punkt')
 # Download kamus stop words
