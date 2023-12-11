@@ -1,0 +1,11 @@
+Akurasi,Waktu Pelatihan (detik),Classification Report
+0.95,0.9892323017120361,"              precision    recall  f1-score   support
+
+   Lifestyle       0.95      0.95      0.95        42
+      Pemilu       0.95      0.95      0.95        42
+       Sport       0.94      0.94      0.94        36
+
+    accuracy                           0.95       120
+   macro avg       0.95      0.95      0.95       120
+weighted avg       0.95      0.95      0.95       120
+"
