@@ -13,11 +13,12 @@ def main():
 
     with col1:
 
-        st.image("assets/banner.png", use_column_width=True)
+        st.image("assets/gambar.jpg", use_column_width=True)
 
     with col2:
         st.subheader("News Classification: Aplikasi Kategori untuk Berita")
-        st.caption("Berita umumnya dikategorikan menjadi beberapa jenis kategori seperti pemilu, lifestyle sport dan kategori lainnya. Dengan news classification ini kita dapat menemukan jenis kategori berita yang sesuai dengan isi berita tersebut.")
+        st.caption("Nama    : Aderisa Dyta Okvianti")
+        st.caption("NIM    : 200411100013")
 
     news_text = st.text_area(
         "Inputan Isi Berita", key="input_text", height=250)
@@ -29,17 +30,17 @@ def main():
                 st.write('Berita yang anda masukkan termasuk dalam kategori: ')
                 if text == "pemilu":
                     st.info(text, icon="🧑‍🏫")
-                    url = "https://www.google.com/search?q=berita+pemilu+hari+ini"
+                    url = "https://www.google.com/search?q=berita+pemilu+beritasatu+hari+ini"
                     st.write(
                         'Baca juga berita terbaru terkait pemilu 🔎 [Berita pemilu hari ini](%s)'  %url)
                 elif text == "sport":
                     st.info(text, icon="🚣")
-                    url = "https://www.google.com/search?q=berita+sport+hari+ini"
+                    url = "https://www.google.com/search?q=berita+sport+beritasatu+hari+ini"
                     st.write(
                         'Baca juga berita terbaru terkait sport 🔎 [Berita sport hari ini](%s)'  %url)
                 elif text == "lifestyle":
                     st.info(text, icon="💸")
-                    url = "https://www.google.com/search?q=berita+lifestyle+hari+ini"
+                    url = "https://www.google.com/search?q=berita+lifestyle+beritasatu+hari+ini"
                     st.write(
                         'Baca juga berita terbaru terkait lifestyle 🔎 [Berita lifestyle hari ini](%s)'  %url)
         else:
