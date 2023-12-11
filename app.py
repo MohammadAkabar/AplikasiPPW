@@ -13,12 +13,13 @@ def main():
 
     with col1:
 
-        st.image("assets/banner.png", use_column_width=True)
+        st.image("assets/gambar.jpg", use_column_width=True)
 
     with col2:
         st.subheader("News Classification: Aplikasi Kategori untuk Berita")
-        st.caption("Berita umumnya dikategorikan menjadi beberapa jenis kategori seperti pemilu, lifestyle sport dan kategori lainnya. Dengan news classification ini kita dapat menemukan jenis kategori berita yang sesuai dengan isi berita tersebut.")
-
+        st.caption("Nama : Aderisa Dyta Okvianti")
+        st.caption("NIM : 200411100013")
+        
     news_text = st.text_area(
         "Inputan Isi Berita", key="input_text", height=250)
 
