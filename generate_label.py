@@ -11,6 +11,7 @@ nltk.download("stopwords")
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 def get_label(news_text):
     lower = news_text.lower()
     lower = news_text.split()
@@ -39,8 +40,9 @@ def get_label(news_text):
     prediction = model.predict(x_new)
     result = prediction[0]
 
-    
     logging.debug(f"Text after stemming: {stemm}")
+    logging.debug(f"Vectorizer: {vectorizer}")
+    logging.debug(f"Model: {model}")
     logging.debug(f"Transformed data shape: {x_new.shape}")
     logging.debug(f"Prediction array: {prediction}")
 
