@@ -1,49 +1,50 @@
-import nltk
-import re
-from nltk.corpus import stopwords
+
+import streamlit as st
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import networkx as nx
+from nltk.tokenize import sent_tokenize
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 import joblib
-import logging
+import numpy as np
+
+st.title("Text Analysis with Streamlit")
+
+# Load your TF-IDF vectorizer and random forest model
+summ_tfidf_vectorizer = joblib.load('model/tfidfvectorizer')
+rf = joblib.load('model/random_forest_model')
 
 
-nltk.download("punkt")
-nltk.download("stopwords")
+def generate_label(news_text):
+    new_data = news_text
+    # tokenizing kalimat
+    new_data = sent_tokenize(new_data)
+    # Inisialisasi TfidfVectorizer
+    inp_tfidf_vectorizer = TfidfVectorizer()
+    # Melakukan transformasi TF-IDF pada kolom 'final_abstrak'
+    inp_tfidf_matrix = inp_tfidf_vectorizer.fit_transform(new_data)
+    inp_cos_sim_result = []  # untuk menyimpan hasil cosine sim akhir
+    
+    inp_graf = nx.Graph()  # menggunakan Graph bukan DiGraph
+    inp_cos_sim = cosine_similarity(inp_tfidf_matrix)
 
-logging.basicConfig(level=logging.DEBUG)
+    # inisialisasi indeks awal perulangan dari setiap hasil cosine
+    for i_hasil in range(len(inp_cos_sim)):
+        # inisialisasi indeks kedua perulangan dari setiap hasil cosine
+        for j_hasil in range(i_hasil + 1, len(inp_cos_sim)):
+            # menyimpan nilai indeks awal, indeks awal+1, hasil cosim
+            inp_cos_sim_result.append(
+                [i_hasil, j_hasil, inp_cos_sim[i_hasil][j_hasil]])
+            inp_graf.add_edge(i_hasil, j_hasil,
+                              weight=inp_cos_sim[i_hasil][j_hasil])
 
+    # Analisis graf, closeness centrality, dll.
 
-def get_label(news_text):
-    lower = news_text.lower()
-    lower = news_text.split()
+    # Membuat inp_summ_hasil menjadi list jika belum
+    inp_summ_hasil = ["dummy_summary"]  # Ganti dengan ringkasan hasil analisis
 
-    puncuation = [re.sub(r'[.,()&=%:-]', '', token)
-                  for token in lower]
-    puncuation = [re.sub(r'\d+', '', token)
-                  for token in lower]
-    stop_words = set(stopwords.words("indonesian"))
-    stopword = [
-        puncuation for puncuation in puncuation if puncuation.lower() not in stop_words]
+    # Melakukan transformasi TF-IDF pada inp_summ_hasil
+    summ_inp_tfidf_matrix = summ_tfidf_vectorizer.transform(inp_summ_hasil)
 
-    stopword = " ".join(stopword)
-
-    factory = StemmerFactory()
-    stemmer = factory.create_stemmer()
-    stemm = stemmer.stem(stopword)
-
-    # tfidf_vectorizer = TfidfVectorizer()
-    # data = tfidf_vectorizer.fit_transform([stemm])
-
-    vectorizer = joblib.load('model/tfidfvectorizer')
-    model = joblib.load('model/random_forest_model')
-
-    x_new = vectorizer.transform([stemm]).toarray()
-    prediction = model.predict(x_new)
-    result = prediction[0]
-
-    logging.debug(f"Text after stemming: {stemm}")
-    logging.debug(f"Vectorizer: {vectorizer}")
-    logging.debug(f"Model: {model}")
-    logging.debug(f"Transformed data shape: {x_new.shape}")
-    logging.debug(f"Prediction array: {prediction}")
-
-    return result
+    inp_predict = rf.predict(summ_inp_tfidf_matrix.toarray())
+    return inp_predict[0]
