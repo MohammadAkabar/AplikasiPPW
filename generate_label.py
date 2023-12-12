@@ -1,13 +1,13 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
-# Menambahkan impor untuk sent_tokenize
 from nltk.tokenize import sent_tokenize
 
 
-def get_label(input_data, inp_tfidf_vectorizer, inp_summ_hasil, summ_tfidf_vectorizer, rf):
+def get_label(news_text, inp_tfidf_vectorizer, inp_summ_hasil, summ_tfidf_vectorizer, rf):
     # Tokenisasi kalimat
-    new_data = sent_tokenize(input_data)
+    new_data = sent_tokenize(news_text)
 
     # Inisialisasi TfidfVectorizer
     inp_tfidf_matrix = inp_tfidf_vectorizer.transform(new_data)
@@ -22,8 +22,6 @@ def get_label(input_data, inp_tfidf_vectorizer, inp_summ_hasil, summ_tfidf_vecto
     for i_hasil in range(len(inp_cos_sim)):
         # inisialisasi indeks kedua perulangan dari setiap hasil cosine
         for j_hasil in range(i_hasil + 1, len(inp_cos_sim)):
-            # if inp_cos_sim[i_hasil][j_hasil] > treshold:
-            # menyimpan nilai indeks awal, indeks awal+1, hasil cosim
             inp_cos_sim_result.append(
                 [i_hasil, j_hasil, inp_cos_sim[i_hasil][j_hasil]])
             inp_graf.add_edge(i_hasil, j_hasil,
@@ -38,9 +36,13 @@ def get_label(input_data, inp_tfidf_vectorizer, inp_summ_hasil, summ_tfidf_vecto
     for key, value in inp_cc.items():
         inp_summary.append(new_data[key])
 
-    if not isinstance(inp_summ_hasil, list):
-        inp_summ_hasil = [inp_summ_hasil]
-
+    # Melakukan transformasi TF-IDF pada inp_summ_hasil
     summ_inp_tfidf_matrix = summ_tfidf_vectorizer.transform(inp_summ_hasil)
 
-    return rf.predict(summ_inp_tfidf_matrix.toarray())
+    # Menggunakan model RandomForest yang telah diinisialisasi atau dimuat sebelumnya
+    result = rf.predict(summ_inp_tfidf_matrix.toarray())
+
+    # Mengembalikan hasil prediksi
+    return result
+
+
