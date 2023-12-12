@@ -33,8 +33,8 @@ def get_label(news_text):
     # tfidf_vectorizer = TfidfVectorizer()
     # data = tfidf_vectorizer.fit_transform([stemm])
 
-    vectorizer = joblib.load('model/tfidfvectorizer')
-    model = joblib.load('model/random_forest_model')
+    vectorizer = joblib.load('model/tfidf_vectorizer')
+    model = joblib.load('model/nb_model')
 
     x_new = vectorizer.transform([stemm]).toarray()
     prediction = model.predict(x_new)
