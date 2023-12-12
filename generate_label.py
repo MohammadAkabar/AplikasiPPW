@@ -1,7 +1,6 @@
 import nltk
 import re
 from nltk.corpus import stopwords
-from sklearn.feature_extraction.text import TfidfVectorizer
 import joblib
 import logging
 
@@ -12,14 +11,10 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 def preprocess_text(news_text):
-    # Konversi ke huruf kecil
+    # Konversi ke huruf kecil dan menghilangkan tanda baca serta angka
     lower = news_text.lower()
-
-    # Menghilangkan tanda baca
-    puncuation = [re.sub(r'[.,()&=%:-]', '', token) for token in lower.split()]
-
-    # Menghilangkan angka
-    puncuation = [re.sub(r'\d+', '', token) for token in puncuation]
+    puncuation = [re.sub(r'[.,()&=%:-\d]', '', token)
+                  for token in lower.split()]
 
     # Menghilangkan kata-kata stop
     stop_words = set(stopwords.words("indonesian"))
@@ -31,6 +26,7 @@ def preprocess_text(news_text):
 
 
 def get_label(news_text):
+
     # Pra-pemrosesan teks
     preprocessed_text = preprocess_text(news_text)
 
