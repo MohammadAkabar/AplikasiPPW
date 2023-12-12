@@ -124,57 +124,60 @@ with tab4:
 
         st.write(f"Dari hasil akurasi dari 2 metode diatas yaitu metode Random Forest dan SVM didapatkan akurasi yaitu 95% untuk Random Forest dan 90% untuk SVM, Jadi hasil akurasi yang paling baik ialah menggunakan metode Random Forest")
 
-
-with tab5:
-
-        import streamlit as st
-        import time
-        from generate_label import get_label
-
-
-        def main():
-
-            st.set_page_config(
-                page_title="Aplikasi Kategori Berita | Klasifikasi Berita Berita Satu", page_icon="📺")
-
-            col1, col2 = st.columns(2)
-
-            with col1:
-
-                st.image("assets/banner.png", use_column_width=True)
-
-            with col2:
-                st.subheader("Aplikasi Prediksi Kategori Berita")
-                st.caption("Nama : ADERISA DYTA OKVIANTI")
-                st.caption("NIM : 200411100013")
-            news_text = st.text_area(
-                "Masukkan Isi Berita", key="input_text", height=250)
-
-            if st.button("Cari Kategori"):
-                if news_text:
-                    text = get_label(news_text)
-                    with st.expander('Tampilkan Hasil'):
-                        st.write('Berita yang anda masukkan termasuk dalam kategori: ')
-                        if text == "sport":
-                            st.info(text)
-                            url = "https://www.google.com/search?q=berita+sport+beritasatu+hari+ini"
-                            st.write(
-                                'Baca juga berita terbaru terkait Sport [Berita Sport hari ini](%s)'  %url)
-                        elif text == "lifestyle":
-                            st.info(text)
-                            url = "https://www.google.com/search?q=berita+lifestyle+beritasatu+hari+ini"
-                            st.write(
-                                'Baca juga berita terbaru terkait Lifestyle [Berita Lifestyle hari ini](%s)'  %url)
-                        elif text == "pemilu":
-                            st.info(text)
-                            url = "https://www.google.com/search?q=berita+pemilu+radarjatim+hari+ini"
-                            st.write(
-                                'Baca juga berita terbaru terkait pemilu [Berita Pemilu hari ini](%s)'  %url)
-                    
-                else:
-                    time.sleep(.5)
-                    st.toast('Input Teks')
+with tab5: 
+    # Import library
+    import streamlit as st
+    import pandas as pd
+    from sklearn.feature_extraction.text import CountVectorizer
+    from sklearn.model_selection import train_test_split
+    from sklearn.naive_bayes import MultinomialNB
+    from sklearn.pipeline import make_pipeline
+    from sklearn import metrics
 
 
-        if __name__ == "__main__":
-            main()
+            # Ganti 'YOUR_FILE_ID' dengan ID file Google Drive Anda
+    file_id = '15Cc0wnWEXp0sKzX6CS0zVzCwUbNMdaC_'
+    url = f'https://drive.google.com/uc?id=15Cc0wnWEXp0sKzX6CS0zVzCwUbNMdaC_'
+
+        # Ganti 'output.csv' dengan nama file yang diinginkan
+    output_file = 'TF-IDFSummary.csv'
+
+        # Mengunduh file dari Google Drive
+    gdown.download(url, output_file, quiet=False)
+
+
+    st.markdown("<h4 style='text-align: center;'>TF-IDF Summary</h4>", unsafe_allow_html=True)
+
+        # Baca file CSV yang telah diunduh
+    df = pd.read_csv(output_file)
+
+    # Preprocess data
+    X = df['Summary']
+    y = df['Kategori']
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Build Naive Bayes model
+    model = make_pipeline(CountVectorizer(), MultinomialNB())
+    model.fit(X_train, y_train)
+
+    # Streamlit app
+    def predict_category(title):
+        prediction = model.predict([title])
+        return prediction[0]
+
+    # Streamlit UI
+    st.title("Aplikasi Prediksi Kategori Berita")
+
+    # Input judul berita
+    title_input = st.text_input("Masukkan isi berita:")
+
+    # Button untuk memprediksi
+    if st.button("Prediksi"):
+        if title_input:
+            prediction = predict_category(title_input)
+            st.success(f"Kategori berita yang diprediksi: {prediction}")
+        else:
+            st.warning("Silakan masukkan judul berita terlebih dahulu.")
+
