@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 def preprocess_text(news_text):
     # Konversi ke huruf kecil dan menghilangkan tanda baca serta angka
     lower = news_text.lower()
-    puncuation = [re.sub(r'[.,()&=%:-\d]', '', token)
+    puncuation = [re.sub(r'[.,()&=%:\-\d]', '', token)
                   for token in lower.split()]
 
     # Menghilangkan kata-kata stop
