@@ -1,6 +1,6 @@
 streamlit
-pandas
-nltk
+pandas==1.5.3
+nltk==3.8.1
 scikit-learn==1.2.2
 Sastrawi
-joblib
+joblib==1.3.2
