@@ -3,7 +3,6 @@ import re
 from nltk.corpus import stopwords
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 import joblib
-import pandas as pd
 
 
 nltk.download("punkt")
@@ -34,19 +33,8 @@ def get_label(news_text):
     vectorizer = joblib.load('model/tfidfvectorizer')
     model = joblib.load('model/random_forest_model')
 
-    # x_new = vectorizer.transform([stemm]).toarray()
-    # prediction = model.predict(x_new)
-    # result = prediction[0]
-
-    # Preprocess and transform input text
     x_new = vectorizer.transform([stemm]).toarray()
-
-    # Ensure feature names are present
-    feature_names = vectorizer.get_feature_names_out()
-    x_new_df = pd.DataFrame(x_new, columns=feature_names)
-
-    # Make prediction
-    prediction = model.predict(x_new_df)
+    prediction = model.predict(x_new)
     result = prediction[0]
 
     return result
