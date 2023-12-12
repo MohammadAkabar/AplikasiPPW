@@ -1,4 +1,4 @@
-# main.py
+
 import streamlit as st
 import time
 from generate_label import get_label

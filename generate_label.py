@@ -1,49 +1,46 @@
-import nltk
-import re
-from nltk.corpus import stopwords
-from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
-import joblib
-import logging
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import networkx as nx
+# Menambahkan impor untuk sent_tokenize
+from nltk.tokenize import sent_tokenize
 
 
-nltk.download("punkt")
-nltk.download("stopwords")
+def get_label(input_data, inp_tfidf_vectorizer, inp_summ_hasil, summ_tfidf_vectorizer, rf):
+    # Tokenisasi kalimat
+    new_data = sent_tokenize(input_data)
 
-logging.basicConfig(level=logging.DEBUG)
+    # Inisialisasi TfidfVectorizer
+    inp_tfidf_matrix = inp_tfidf_vectorizer.transform(new_data)
 
+    # ========== cosine ==========
+    inp_cos_sim_result = []  # untuk menyimpan hasil cosine sim akhir
 
-def get_label(news_text):
-    lower = news_text.lower()
-    lower = news_text.split()
+    inp_graf = nx.DiGraph()
+    inp_cos_sim = cosine_similarity(inp_tfidf_matrix)
 
-    puncuation = [re.sub(r'[.,()&=%:-]', '', token)
-                  for token in lower]
-    puncuation = [re.sub(r'\d+', '', token)
-                  for token in lower]
-    stop_words = set(stopwords.words("indonesian"))
-    stopword = [
-        puncuation for puncuation in puncuation if puncuation.lower() not in stop_words]
+    # inisialisasi indeks awal perulangan dari setiap hasil cosine
+    for i_hasil in range(len(inp_cos_sim)):
+        # inisialisasi indeks kedua perulangan dari setiap hasil cosine
+        for j_hasil in range(i_hasil + 1, len(inp_cos_sim)):
+            # if inp_cos_sim[i_hasil][j_hasil] > treshold:
+            # menyimpan nilai indeks awal, indeks awal+1, hasil cosim
+            inp_cos_sim_result.append(
+                [i_hasil, j_hasil, inp_cos_sim[i_hasil][j_hasil]])
+            inp_graf.add_edge(i_hasil, j_hasil,
+                              weight=inp_cos_sim[i_hasil][j_hasil])
 
-    stopword = " ".join(stopword)
+    inp_summary = []  # membuat array kosong untuk hasil inp_summary
 
-    factory = StemmerFactory()
-    stemmer = factory.create_stemmer()
-    stemm = stemmer.stem(stopword)
+    inp_cc = nx.closeness_centrality(inp_graf)
+    inp_cc = dict(sorted(inp_cc.items(),
+                         key=lambda item: item[1], reverse=True))
 
-    # tfidf_vectorizer = TfidfVectorizer()
-    # data = tfidf_vectorizer.fit_transform([stemm])
+    for key, value in inp_cc.items():
+        inp_summary.append(new_data[key])
 
-    vectorizer = joblib.load('model/tfidfvectorizer')
-    model = joblib.load('model/random_forest_model')
+    if not isinstance(inp_summ_hasil, list):
+        inp_summ_hasil = [inp_summ_hasil]
 
-    x_new = vectorizer.transform([stemm]).toarray()
-    prediction = model.predict(x_new)
-    result = prediction[0]
+    summ_inp_tfidf_matrix = summ_tfidf_vectorizer.transform(inp_summ_hasil)
 
-    logging.debug(f"Text after stemming: {stemm}")
-    logging.debug(f"Vectorizer: {vectorizer}")
-    logging.debug(f"Model: {model}")
-    logging.debug(f"Transformed data shape: {x_new.shape}")
-    logging.debug(f"Prediction array: {prediction}")
-
-    return result
+    return rf.predict(summ_inp_tfidf_matrix.toarray())
