@@ -1,3 +1,4 @@
+python==3.10.12
 streamlit
 networkx==3.2.1
 pandas==1.5.3
