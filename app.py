@@ -28,17 +28,17 @@ def main():
             text = get_label(news_text)
             with st.expander('Tampilkan Hasil'):
                 st.write('Berita yang anda masukkan termasuk dalam kategori: ')
-                if text == "pemilu":
+                if text == "Pemilu":
                     st.info(text, icon="🧑‍🏫")
                     url = "https://www.google.com/search?q=berita+pemilu+beritasatu+hari+ini"
                     st.write(
                         'Baca juga berita terbaru terkait pemilu 🔎 [Berita pemilu hari ini](%s)'  %url)
-                elif text == "sport":
+                elif text == "Sport":
                     st.info(text, icon="🚣")
                     url = "https://www.google.com/search?q=berita+sport+beritasatu+hari+ini"
                     st.write(
                         'Baca juga berita terbaru terkait sport 🔎 [Berita sport hari ini](%s)'  %url)
-                elif text == "lifestyle":
+                elif text == "Lifestyle":
                     st.info(text, icon="💸")
                     url = "https://www.google.com/search?q=berita+lifestyle+beritasatu+hari+ini"
                     st.write(
