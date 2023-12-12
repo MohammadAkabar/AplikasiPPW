@@ -2,6 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
+import nltk
 from nltk.tokenize import sent_tokenize
 
 # Inisialisasi model RandomForest (contoh: di sini diasumsikan model_rf sudah diinisialisasi atau dimuat sebelumnya)
@@ -10,6 +11,9 @@ model_rf = RandomForestClassifier()
 
 def get_label(news_text):
     # Tokenisasi kalimat
+
+    nltk.download('punkt')
+
     new_data = sent_tokenize(news_text)
 
     # Inisialisasi TfidfVectorizer
