@@ -3,11 +3,13 @@ import re
 from nltk.corpus import stopwords
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 import joblib
+import logging
 
 
 nltk.download("punkt")
 nltk.download("stopwords")
 
+logging.basicConfig(level=logging.DEBUG)
 
 def get_label(news_text):
     lower = news_text.lower()
@@ -36,5 +38,10 @@ def get_label(news_text):
     x_new = vectorizer.transform([stemm]).toarray()
     prediction = model.predict(x_new)
     result = prediction[0]
+
+    
+    logging.debug(f"Text after stemming: {stemm}")
+    logging.debug(f"Transformed data shape: {x_new.shape}")
+    logging.debug(f"Prediction array: {prediction}")
 
     return result
