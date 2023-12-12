@@ -4,13 +4,17 @@ from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
 from nltk.tokenize import sent_tokenize
 
+# Inisialisasi model RandomForest (contoh: di sini diasumsikan model_rf sudah diinisialisasi atau dimuat sebelumnya)
+model_rf = RandomForestClassifier()
 
-def get_label(news_text, inp_tfidf_vectorizer, inp_summ_hasil, summ_tfidf_vectorizer, rf):
+
+def get_label(news_text):
     # Tokenisasi kalimat
     new_data = sent_tokenize(news_text)
 
     # Inisialisasi TfidfVectorizer
-    inp_tfidf_matrix = inp_tfidf_vectorizer.transform(new_data)
+    tfidf_vectorizer = TfidfVectorizer()
+    inp_tfidf_matrix = tfidf_vectorizer.fit_transform(new_data)
 
     # ========== cosine ==========
     inp_cos_sim_result = []  # untuk menyimpan hasil cosine sim akhir
@@ -36,13 +40,16 @@ def get_label(news_text, inp_tfidf_vectorizer, inp_summ_hasil, summ_tfidf_vector
     for key, value in inp_cc.items():
         inp_summary.append(new_data[key])
 
-    # Melakukan transformasi TF-IDF pada inp_summ_hasil
-    summ_inp_tfidf_matrix = summ_tfidf_vectorizer.transform(inp_summ_hasil)
+    # Menggunakan model_rf yang telah diinisialisasi sebelumnya
+    summ_inp_tfidf_matrix = tfidf_vectorizer.transform(new_data)
 
-    # Menggunakan model RandomForest yang telah diinisialisasi atau dimuat sebelumnya
-    result = rf.predict(summ_inp_tfidf_matrix.toarray())
+    # Melakukan prediksi menggunakan model_rf
+    result = model_rf.predict(summ_inp_tfidf_matrix.toarray())
 
     # Mengembalikan hasil prediksi
     return result
 
-
+# Contoh penggunaan:
+# news_text = "Contoh teks berita yang ingin dikategorikan."
+# result = get_label(news_text)
+# print(result)
